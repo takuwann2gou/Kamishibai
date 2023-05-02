@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Webアプリケーション</title>
+</head>
+<body>
+  <div id="slideshow-container">
+    <!-- スライドを表示するためのコンテナ -->
+  </div>
+  <audio id="bgm">
+    <!-- BGMを再生するためのaudio要素 -->
+  </audio>
+  <audio id="sound-effect">
+    <!-- 効果音を再生するためのaudio要素 -->
+  </audio>
+</body>
+</html>
+
+<!-- jQueryを読み込む -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- スライドショーを実装するためのスクリプト -->
+<script>
+$(function() {
+  // スライドショーを作成する
+  // スライドの画像やキャプションは、適宜変更してください。
+  var slides = [
+    {image: "slide1.jpg", caption: "キャプション1"},
+    {image: "slide2.jpg", caption: "キャプション2"},
+    {image: "slide3.jpg", caption: "キャプション3"}
+  ];
+  var slideshow = $("#slideshow-container").slick({
+    slidesToShow: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+    dots: true
+  });
+  $.each(slides, function(index, slide) {
+    slideshow.slick('slickAdd', '<div><img src="' + slide.image + '"><p>' + slide.caption + '</p></div>');
+  });
+});
+</script>
+
+<!-- Howler.jsを読み込む -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.3.1/howler.min.js"></script>
+
+<!-- BGMと効果音を再生するためのスクリプト -->
+<script>
+var bgm = new Howl({
+  src: ['bgm.mp3'],
+  loop: true,
+  volume: 0.5
+});
+var soundEffect = new Howl({
+  src: ['sound-effect.mp3']
+});
+bgm.play();
+</script>
+
+<!-- Socket.ioを読み込む -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.min.js"></script>
+
+<!-- WebSocketを使用して、スライドと音声の状態を同期するためのスクリプト -->
+<script>
+var socket = io();
+// スライドショーの状態を同期する
+socket.on('slide-change', function(data) {
+  slideshow.slick('slickGoTo', data.index);
+});
+// BGMの再生状態を同期する
+socket.on('bgm-play', function() {
+  bgm.play();
+});
+socket.on('bgm-pause', function() {
+  bgm.pause();
+});
+socket.on('bgm-stop', function() {
+  bgm.stop();
+});
+// 効果音を再生する
+socket.on('play-sound-effect', function() {
+  soundEffect.play();
+});
+</script>
+
+<script src="forSoket.js"></script>
