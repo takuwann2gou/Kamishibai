@@ -1,55 +1,51 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Drag and Drop Image Uploader</title>
-    <link href="static/home.css" rel="stylesheet">
+    <title>Upload and Display Images and Audio Files</title>
 </head>
 <body>
-    {% if message %}
-        <script>alert("{{ message }}");</script>
+    <h1>Upload Images</h1>
+    <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
+        <label for="image">Choose an image file:</label>
+        <input type="file" name="image" id="image">
+        <button type="submit">Upload</button>
+    </form>
+
+    <hr>
+
+    <h1>Upload Audio Files</h1>
+    <form action="{{ url_for('upload_audio') }}" method="post" enctype="multipart/form-data">
+        <label for="audio">Choose an audio file:</label>
+        <input type="file" name="audio" id="audio">
+        <button type="submit">Upload</button>
+    </form>
+
+    <hr>
+
+    <h1>Images</h1>
+    {% if images %}
+        {% for image in images %}
+            <img src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}">
+        {% endfor %}
+    {% else %}
+        <p>No images found.</p>
     {% endif %}
 
-    <h1>Drag and Drop Image Uploader</h1>
-    <!-- FORM -->
-    <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-        <div class="drop-area">
-            <input type="file" name="file">
-            <input type="submit" value="Upload">
-        </div>
-    </form>
+    <hr>
 
-    <!-- INDEX -->
-    <div class="thumbnails">
-        {% for image in images %}
-            <div class="thumbnail">
-                <img src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}">
-            </div>
+    <h1>Audio Files</h1>
+    {% if audio_files %}
+        {% for audio_file in audio_files %}
+            <audio controls>
+                <source src="{{ url_for('static', filename='audio/' + audio_file) }}" type="{{ get_audio_type(audio_file) }}">
+                Your browser does not support the audio element.
+            </audio>
+            <p>{{ audio_file }}</p>
         {% endfor %}
-    </div>
+    {% else %}
+        <p>No audio files found.</p>
+    {% endif %}
 
-<!-- mサウンド -->
-<h1>File Upload Example</h1>
-    <!-- FORM -->
-    <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-        <div class="drop-area">
-            <input type="file" name="file">
-            <input type="submit" value="Upload">
-        </div>
-    </form>
-
-    <!-- INDEX -->
-    <div class="thumbnails">
-        {% for audio in audios %}
-            <div class="thumbnail">
-                <img src="{{ url_for('static', filename='audios/' + audio) }}" alt="{{ audio }}">
-            </div>
-        {% endfor %}
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script src="static/imgUpload.js"></script>
 </body>
 </html>
