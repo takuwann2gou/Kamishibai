@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag and Drop Image Uploader</title>
+    <link href="static/home.css" rel="stylesheet">
+</head>
+<body>
+    <h1>Drag and Drop Image Uploader</h1>
+    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <div class="drop-area">
+            <p>ここに画像をドラッグ&ドロップするか、クリックしてファイルを選択してください。</p>
+            <input type="file" name="file" id="file-input" style="display: none;">
+        </div>
+        <button type="submit">アップロード</button>
+    </form>
+    <!-- INDEX -->
+    <div class="thumbnails">
+        {% for image in images %}
+            <div class="thumbnail">
+                <img src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}">
+            </div>
+        {% endfor %}
+    </div>
+
+<!-- mサウンド -->
+<h1>File Upload Example</h1>
+
+
+	<form id="file-upload" method="post" enctype="multipart/form-data">
+	    <div id="droppable">
+            <p>ここに画像をドラッグ&ドロップするか、<button type="submit" style="display: none;">クリック</button>してファイルを選択してください。</p>
+            <input type="img_file" id="file-input" style="display: none;">
+        </div>
+	</form>
+    <!-- INDEX -->
+    <div class="thumbnails">
+        {% for audio in audios %}
+            <div class="thumbnail">
+                <img src="{{ url_for('static', filename='audios/' + audio) }}" alt="{{ audio }}">
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="static/imgUpload.js"></script>
+</body>
+</html>

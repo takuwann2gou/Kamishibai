@@ -1,0 +1,46 @@
+p{
+    font-size: 10px;
+}
+
+/* 画像 */
+
+.drop-area {
+    width: 400px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 200px;
+    font-size: 24px;
+}
+.thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+.thumbnail {
+    width: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.thumbnail img {
+width: 100%;
+}
+
+/* サウンド */
+
+#droppable {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+#droppable img {
+    max-width: 100%;
+    max-height: 100%;
+}
+#file-upload {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
