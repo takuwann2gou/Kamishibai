@@ -26,6 +26,11 @@ p{
 .thumbnail img {
 width: 100%;
 }
+/* イメージ */
+.index_image {
+    height:100px;
+    width:200px;
+}
 
 /* サウンド */
 

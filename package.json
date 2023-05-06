@@ -4,5 +4,23 @@
     "jquery": "^3.6.4",
     "slick-carousel": "^1.8.1",
     "socket.io": "^4.6.1"
-  }
+  },
+  "name": "kamishibai",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/takuwann2gou/Kamishibai.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/takuwann2gou/Kamishibai/issues"
+  },
+  "homepage": "https://github.com/takuwann2gou/Kamishibai#readme",
+  "description": ""
 }

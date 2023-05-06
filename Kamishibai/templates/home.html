@@ -1,32 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>Upload and Display Images and Audio Files</title>
+    <link href="../static/home.css" rel="stylesheet">
 </head>
 <body>
+    <!-- アラートメッセージ -->
+    {% if message %}
+        <script>alert("{{ message }}");</script>
+    {% endif %}
+    
+    <!-- イメージアップロード -->
     <h1>Upload Images</h1>
-    <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
-        <label for="image">Choose an image file:</label>
-        <input type="file" name="image" id="image">
+    <form class="drop-area" action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="image">
         <button type="submit">Upload</button>
     </form>
 
     <hr>
 
+    <!-- オーディオアップロード -->
     <h1>Upload Audio Files</h1>
-    <form action="{{ url_for('upload_audio') }}" method="post" enctype="multipart/form-data">
-        <label for="audio">Choose an audio file:</label>
-        <input type="file" name="audio" id="audio">
+    <form class="drop-area" action="{{ url_for('upload_audio') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="audio">
         <button type="submit">Upload</button>
     </form>
 
     <hr>
 
+    <!-- INDEX -->
     <h1>Images</h1>
     {% if images %}
         {% for image in images %}
-            <img src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}">
+            <img  class="index_image" src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}">
         {% endfor %}
     {% else %}
         <p>No images found.</p>
@@ -34,18 +41,28 @@
 
     <hr>
 
+    <!-- INDEX -->
     <h1>Audio Files</h1>
-    {% if audio_files %}
-        {% for audio_file in audio_files %}
+    {% if audios %}
+      <ul>
+        {% for audio in audios %}
+          <li>
+            {{ audio }}
             <audio controls>
-                <source src="{{ url_for('static', filename='audio/' + audio_file) }}" type="{{ get_audio_type(audio_file) }}">
-                Your browser does not support the audio element.
+              <source src="{{ url_for('static', filename='audios/' + audio) }}" type="audio/mpeg">
+              Your browser does not support the audio element.
             </audio>
-            <p>{{ audio_file }}</p>
+          </li>
         {% endfor %}
+      </ul>
     {% else %}
-        <p>No audio files found.</p>
+      <p>No audios found.</p>
     {% endif %}
 
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="static/imgUpload.js"></script>
 </body>
 </html>
