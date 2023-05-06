@@ -6,14 +6,19 @@
     <link href="static/home.css" rel="stylesheet">
 </head>
 <body>
+    {% if message %}
+        <script>alert("{{ message }}");</script>
+    {% endif %}
+
     <h1>Drag and Drop Image Uploader</h1>
-    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+    <!-- FORM -->
+    <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
         <div class="drop-area">
-            <p>ここに画像をドラッグ&ドロップするか、クリックしてファイルを選択してください。</p>
-            <input type="file" name="file" id="file-input" style="display: none;">
+            <input type="file" name="file">
+            <input type="submit" value="Upload">
         </div>
-        <button type="submit">アップロード</button>
     </form>
+
     <!-- INDEX -->
     <div class="thumbnails">
         {% for image in images %}
@@ -25,14 +30,14 @@
 
 <!-- mサウンド -->
 <h1>File Upload Example</h1>
-
-
-	<form id="file-upload" method="post" enctype="multipart/form-data">
-	    <div id="droppable">
-            <p>ここに画像をドラッグ&ドロップするか、<button type="submit" style="display: none;">クリック</button>してファイルを選択してください。</p>
-            <input type="img_file" id="file-input" style="display: none;">
+    <!-- FORM -->
+    <form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+        <div class="drop-area">
+            <input type="file" name="file">
+            <input type="submit" value="Upload">
         </div>
-	</form>
+    </form>
+
     <!-- INDEX -->
     <div class="thumbnails">
         {% for audio in audios %}
@@ -41,7 +46,6 @@
             </div>
         {% endfor %}
     </div>
-
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
