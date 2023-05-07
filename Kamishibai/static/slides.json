@@ -1,0 +1,12 @@
+{
+    "senkanosousou": [
+        {
+            "image_url": "/static/images/2.jpg",
+            "order": 1
+        },
+        {
+            "image_url": "/static/images/Group 12.png",
+            "order": 2
+        }
+    ]
+}

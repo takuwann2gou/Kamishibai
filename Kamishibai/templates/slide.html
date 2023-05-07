@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Slide Editor</title>
+    <link href="../static/slide.css" rel="stylesheet">
+    <style>
+      #slide-container {
+        width: 800px;
+        height: 600px;
+        border: 1px solid black;
+        position: relative;
+      }
+
+      .slide {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      #thumbnail-container {
+        width: 800px;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .thumbnail {
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+        margin: 5px;
+        cursor: pointer;
+      }
+
+      .thumbnail.active {
+        border-color: blue;
+      }
+
+      #preview-container {
+        width: 800px;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #preview-image {
+        max-width: 800px;
+        max-height: 600px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Slide Editor</h1>
+    <div id="slide-container"></div>
+    <div id="thumbnail-container"></div>
+    <div id="preview-container">
+      <img id="preview-image" src="">
+    </div>
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script src="/static/js/slide.js"></script>
+  </body>
+</html>

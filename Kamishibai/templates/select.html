@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Select Images</title>
+</head>
+<body>
+    <h1>Select Images for Slide Show</h1>
+    <form action="{{ url_for('slide') }}" method="post">
+        {% for image in images %}
+        <label>
+            <input type="checkbox" name="selected" value="{{ image }}">
+            <img src="{{ url_for('static', filename='images/' + image) }}" width="200" height="200">
+        </label>
+        {% endfor %}
+        <br>
+        <button type="submit">Create Slide Show</button>
+    </form>
+</body>
+</html>

@@ -15,6 +15,7 @@ app.config['UPLOAD_AUDIO_FOLDER'] = UPLOAD_AUDIO_FOLDER
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 ALLOWED_AUDIO_EXTENSIONS = {'mp3', 'wav'}
 
+### 汎用関数定義 ###
 
 # 画像ファイルの一覧を取得する関数を定義
 def get_image_list():
@@ -30,7 +31,21 @@ def get_audio_list():
         if file_name.endswith(tuple(ALLOWED_AUDIO_EXTENSIONS)):
             audios.append(file_name)
     return audios
+# スライドショー用のJSONオブジェクトを取得する関数を定義
+def get_slideshow():
+    images = get_image_list()
+    slideshow = []
+    for i, image in enumerate(images):
+        slide = {
+            'id': i,
+            'filename': image,
+            'order': i
+        }
+        slideshow.append(slide)
+    return slideshow
 
+
+### ページ定義 ###
 
 # トップページのエンドポイントを定義
 @app.route('/')
@@ -41,6 +56,16 @@ def index():
     # HTMLに変数として要素を渡す。
     return render_template('home.html', images=images, audios=audios,get_audio_type=get_audio_type)
 
+#　スライドショーのエンドポイントを定義
+@app.route('/slide', methods=['GET', 'POST'])
+def slide():
+    images = os.listdir(UPLOAD_IMAGE_FOLDER)
+    selected_images = request.form.getlist('selected')
+    return render_template('slide.html', images=images, selected_images=selected_images)
+
+
+
+### アップロード ###
 
 # 画像をアップロードするエンドポイントを定義
 @app.route('/upload_image', methods=['POST'])
@@ -65,17 +90,20 @@ def upload_audio():
         flash('無効なファイル形式です。')
     return redirect(url_for('index'))
 
+# スライドショーの順番を変更するエンドポイントを定義
+@app.route('/slideshow/update_order', methods=['POST'])
+def update_slideshow_order():
+    data = request.json
+    slideshow = data['slideshow']
+    for slide in slideshow:
+        filename = slide['filename']
+        order = slide['order']
+        src = os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], filename)
+        dst = os.path
+
 
 ##　音声用の追加関数　##
 
-#　音声再生用
-# def display_audio_list():
-#     audio_list = get_audio_list()
-#     for file_name in audio_list:
-#         file_path = os.path.join(UPLOAD_AUDIO_FOLDER, file_name)
-#         display(Audio(file_path, autoplay=False))
-#         # autoplayで自動再生を防いでいます
-#　音声拡張子フィルター
 def get_audio_type(filename):
     _, ext = os.path.splitext(filename)
     if ext.lower()[1:] in ALLOWED_AUDIO_EXTENSIONS:
