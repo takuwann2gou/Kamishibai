@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from IPython.display import Audio, display
-import os
+import os,json
 
 app = Flask(__name__)
 
@@ -61,7 +61,11 @@ def index():
 def slide():
     images = os.listdir(UPLOAD_IMAGE_FOLDER)
     selected_images = request.form.getlist('selected')
-    return render_template('slide.html', images=images, selected_images=selected_images)
+    #JSONの格納
+    with open('Kamishibai\static\slides.json', 'r', encoding="utf-8") as f:
+        data = json.load(f)
+    slides = data['senkanosousou']
+    return render_template('slide.html', images=images, selected_images=selected_images,slides=slides)
 
 
 
