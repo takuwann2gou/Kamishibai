@@ -59,13 +59,12 @@ def index():
 #　スライドショーのエンドポイントを定義
 @app.route('/slide', methods=['GET', 'POST'])
 def slide():
-    images = os.listdir(UPLOAD_IMAGE_FOLDER)
-    selected_images = request.form.getlist('selected')
+    images = get_image_list()
     #JSONの格納
     with open('Kamishibai\static\slides.json', 'r', encoding="utf-8") as f:
         data = json.load(f)
     slides = data['senkanosousou']
-    return render_template('slide.html', images=images, selected_images=selected_images,slides=slides)
+    return render_template('slide.html', images=images,slides=slides)
 
 
 

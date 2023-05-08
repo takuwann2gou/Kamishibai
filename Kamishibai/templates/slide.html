@@ -6,12 +6,12 @@
     <link href="../static/slide.css" rel="stylesheet">
     <style>
       #preview-container {
-        border: 10px;
+        border: 5px;
       }
 
       #preview-image {
-        width: 1280px;
-        height: 800px;
+        max-width: 80%;
+        height: 80%;
       }
 
       .card-img {
@@ -21,32 +21,88 @@
     </style>
   </head>
   <body>
-    <h1>Slide Editor</h1>
-    <div id="preview-container">
-      <img id="preview-image">
-    </div>
+      <!-- 現在のスライド -->
+      <h1>Slide Editor</h1>
+      <div id="preview-container">
+          <img id="preview-image" src="{{slide[preview_order][image_url]}}">
+      </div>
+      <button type="button" onclick="saveSlide()">Save slide</button>
 
-    <!-- 画像一覧表示部分 -->
-<div class="row">
-  {% for slide in slides %}
-  <p>{{ slide['title'] }}</p>
-  <div class="col-lg-3 col-md-4 col-6">
-    <div class="card mb-4">
-      <img class="card-img" src="{{ slide['image_url'] }}" onclick="previewImage(this)">
-    </div>
-  </div>
-  {% endfor %}
-</div>
-<!-- JavaScript -->
+      <!-- スライド一覧表示部分 -->s
+      <div class="row">
+          {% for slide in slides %}
+          <p>{{ slide['title'] }}</p>
+          <div class="col-lg-3 col-md-4 col-6">
+              <div class="card mb-4">
+                  <img class="card-img" src="{{ slide['image_url'] }}" onclick="previewImage(this)">
+              </div>
+          </div>
+          {% endfor %}
+      </div>
 
-  <!-- プレビュー表示用 -->
-  <script>
-  function previewImage(img) {
-    var preview = document.getElementById("preview-image");
-    preview.src = img.src;
-  }
-  </script>
+      <!-- ライブラリを一覧表示 -->
+      <!-- INDEX -->
+      <h1>Images</h1>
+      {% if images %}
+      {% for image in images %}
+      <img class="card-img" src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}" onclick="previewImage(this)">
+      {% endfor %}
+      {% else %}
+      <p>No images found.</p>
+      {% endif %}
 
-    <script src="../static/slide.js"></script>
+      <form>
+          <label for="image-selector">Select an image:</label>
+          <input type="file" id="image-selector" accept="image/*">
+          <button type="button" onclick="saveSlide()">Save slide</button>
+      </form>
+
+      <!-- JavaScript -->
+
+      <script>
+          // プレビュー表示用
+          function previewImage(img) {
+              var preview = document.getElementById("preview-image");
+              preview.src = img.src;
+          }
+
+          function saveSlide() {
+              var imageSelector = document.getElementById("image-selector");
+              var file = imageSelector.files[0];
+
+              if (!file) {
+                  return alert("Please select an image to save.");
+              }
+
+              var reader = new FileReader();
+              reader.readAsDataURL(file);
+
+              reader.onload = function () {
+                  var base64 = reader.result;
+                  var slide = {
+                      "image_url": base64,
+                      "order": slides.length + 1
+                  };
+                  slides.push(slide);
+                  saveSlides();
+                  alert("Slide saved successfully!");
+              };
+
+              reader.onerror = function (error) {
+                  console.log('Error: ', error);
+              };
+          }
+
+          function saveSlides() {
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", "/save-slides");
+              xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+              xhr.send(JSON.stringify(slides));
+          }
+
+
+      </script>
+
+      <script src="../static/slide.js"></script>
   </body>
 </html>
