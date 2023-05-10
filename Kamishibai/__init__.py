@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from IPython.display import Audio, display
 import os,json
 
@@ -63,12 +63,14 @@ def slide():
     #JSONの格納
     with open('Kamishibai\static\slides.json', 'r', encoding="utf-8") as f:
         data = json.load(f)
-    slides = data['senkanosousou']
+    # JSON文字列に変換して、テンプレートに渡す前にエスケープを回避
+    slides = json.dumps(data['senkanosousou'])
+    slides = json.loads(slides)
     return render_template('slide.html', images=images,slides=slides)
 
 
 
-### アップロード ###
+### 画像&音声のアップロード ###
 
 # 画像をアップロードするエンドポイントを定義
 @app.route('/upload_image', methods=['POST'])
@@ -93,18 +95,26 @@ def upload_audio():
         flash('無効なファイル形式です。')
     return redirect(url_for('index'))
 
-# スライドショーの順番を変更するエンドポイントを定義
-@app.route('/slideshow/update_order', methods=['POST'])
-def update_slideshow_order():
-    data = request.json
-    slideshow = data['slideshow']
-    for slide in slideshow:
-        filename = slide['filename']
-        order = slide['order']
-        src = os.path.join(app.config['UPLOAD_IMAGE_FOLDER'], filename)
-        dst = os.path
 
+##　スライドショーの更新　##
 
+# @app.route('/save_slide', methods=['POST'])
+# def save_slide():
+#     data = request.get_json()
+#     selected_image_url = request.form['selected_image_url']
+#     for slide in data['senkanosousou']:
+#         if slide['image_url'] == selected_image_url:
+#             slide['image_url'] = selected_image_url
+#     with open('slides.json', 'w') as f:
+#         json.dump(data, f)
+#     return jsonify(success=True)
+
+@app.route('/save_slide', methods=['POST'])
+def save_slide():
+    slides = request.get_json()#Json型をlistにして取得
+    with open('Kamishibai/static/slides.json', 'w') as f:
+        json.dump(slides, f)#List型をJson型にしてファイルを作成上書き
+    return jsonify({'success': True})
 ##　音声用の追加関数　##
 
 def get_audio_type(filename):

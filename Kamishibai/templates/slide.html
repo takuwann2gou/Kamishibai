@@ -1,108 +1,154 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <title>Slide Editor</title>
     <link href="../static/slide.css" rel="stylesheet">
     <style>
-      #preview-container {
-        border: 5px;
-      }
+        #preview-container {
+            border: 5px;
+        }
 
-      #preview-image {
-        max-width: 80%;
-        height: 80%;
-      }
+        #preview-image {
+            max-width: 80%;
+            height: 80%;
+        }
 
-      .card-img {
-        width: 128px;
-        height: 100px
-      }
+        .card-img {
+            width: 128px;
+            height: 100px
+        }
     </style>
-  </head>
-  <body>
-      <!-- 現在のスライド -->
-      <h1>Slide Editor</h1>
-      <div id="preview-container">
-          <img id="preview-image" src="{{slide[preview_order][image_url]}}">
-      </div>
-      <button type="button" onclick="saveSlide()">Save slide</button>
+</head>
 
-      <!-- スライド一覧表示部分 -->s
-      <div class="row">
-          {% for slide in slides %}
-          <p>{{ slide['title'] }}</p>
-          <div class="col-lg-3 col-md-4 col-6">
-              <div class="card mb-4">
-                  <img class="card-img" src="{{ slide['image_url'] }}" onclick="previewImage(this)">
-              </div>
-          </div>
-          {% endfor %}
-      </div>
+<body>
+    <!-- 現在のスライド -->
+    <h1>Slide Editor</h1>
+    <div id="preview-container">
+        <img id="preview-image" src="{{ url_for('static', filename='images/' + slides[0]['image_url']) }}">
+    </div>
+    <!-- 保存ボタン -->
+    <form action="/save_slide" method="POST">
+        <input type="hidden" name="image_url" value="">
+        <button type="submit" onclick="saveSlide()">Save</button>
+    </form>
 
-      <!-- ライブラリを一覧表示 -->
-      <!-- INDEX -->
-      <h1>Images</h1>
-      {% if images %}
-      {% for image in images %}
-      <img class="card-img" src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}" onclick="previewImage(this)">
-      {% endfor %}
-      {% else %}
-      <p>No images found.</p>
-      {% endif %}
+    <!-- スライド一覧表示部分 -->
+    <div class="row">
+        {% for slide in slides %}
+        <p>{{ slide['title'] }}</p>
+        <div class="col-lg-3 col-md-4 col-6">
+            <div class="card mb-4">
+                <img class="card-img" src="{{ url_for('static', filename='images/' + slide['image_url']) }}"
+                    onclick="previewImage(this)">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-      <form>
-          <label for="image-selector">Select an image:</label>
-          <input type="file" id="image-selector" accept="image/*">
-          <button type="button" onclick="saveSlide()">Save slide</button>
-      </form>
+    <!-- ライブラリを一覧表示 -->
+    <!-- INDEX -->
+    <h1>Images</h1>
+    {% if images %}
+    {% for image in images %}
+    <img class="card-img" src="{{ url_for('static', filename='images/' + image) }}" alt="{{ image }}"
+        onclick="previewImage(this)">
+    {% endfor %}
+    {% else %}
+    <p>No images found.</p>
+    {% endif %}
 
-      <!-- JavaScript -->
+    <!-- JavaScript -->
 
-      <script>
-          // プレビュー表示用
-          function previewImage(img) {
-              var preview = document.getElementById("preview-image");
-              preview.src = img.src;
-          }
+    <script>
+        // 現在選択中のスライド番号
+        var order_preview = 0;
 
-          function saveSlide() {
-              var imageSelector = document.getElementById("image-selector");
-              var file = imageSelector.files[0];
+        // プレビュー表示用
+        function previewImage(img) {
+            var preview = document.getElementById("preview-image");
+            preview.src = img.src;
+        }
 
-              if (!file) {
-                  return alert("Please select an image to save.");
-              }
+        // function saveSlide() {
+        //     var imageSelector = document.getElementById("image-selector");
+        //     var file = imageSelector.files[0];
 
-              var reader = new FileReader();
-              reader.readAsDataURL(file);
+        //     if (!file) {
+        //         return alert("Please select an image to save.");
+        //     }
 
-              reader.onload = function () {
-                  var base64 = reader.result;
-                  var slide = {
-                      "image_url": base64,
-                      "order": slides.length + 1
-                  };
-                  slides.push(slide);
-                  saveSlides();
-                  alert("Slide saved successfully!");
-              };
+        //     var reader = new FileReader();
+        //     reader.readAsDataURL(file);
 
-              reader.onerror = function (error) {
-                  console.log('Error: ', error);
-              };
-          }
+        //     reader.onload = function () {
+        //         var base64 = reader.result;
+        //         var slide = {
+        //             "image_url": base64,
+        //             "order": slides.length + 1
+        //         };
+        //         slides.push(slide);
+        //         saveSlides();
+        //         alert("Slide saved successfully!");
+        //     };
 
-          function saveSlides() {
-              var xhr = new XMLHttpRequest();
-              xhr.open("POST", "/save-slides");
-              xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-              xhr.send(JSON.stringify(slides));
-          }
+        //     reader.onerror = function (error) {
+        //         console.log('Error: ', error);
+        //     };
+        // }
 
+        // function saveSlide() {
+        //     // プレビューに表示中画像のimage_urlを取得
+        //     var selectedImageUrl = document.getElementById("preview-image").src;
 
-      </script>
+        //     // slides.jsonから対象スライドを取得
+        //     var slides = JSON.parse('{{ slides | tojson | safe}}')[oreder_preview];
+        //     var targetSlide = slides[order_preview];
 
-      <script src="../static/slide.js"></script>
-  </body>
+        //     // 対象スライドのimage_urlを更新
+        //     targetSlide.image_url = clickedImageUrl;
+
+        //     // 更新後のslides.jsonを保存
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open("POST", "/save_slide", true);
+        //     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        //     xhr.send(JSON.stringify(slides));
+        // }
+
+        function saveSlide() {
+            // プレビューに表示中画像のimage_urlを取得
+            var selectedImageUrl = document.getElementById("preview-image").src;
+
+            // slides.jsonから対象スライドを取得
+            var slides = JSON.parse('{{ slides | tojson | safe}}');
+            var targetSlide = slides[order_preview];
+
+            // 対象スライドのimage_urlを更新
+            targetSlide['image_url'] = selectedImageUrl;
+
+            // 更新後のslides.jsonを保存
+            fetch('/save_slide', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(slides)
+            })
+                .then(response => response.json())          //Jsonに変換
+                .then(data => {
+                    var form = document.forms[0];           //フォームオブジェクトを取得
+                    form.image_url.value = selectedImageUrl;//image_urlを更新
+                    form.submit();                          //フォームの送信
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+//85
+    </script>
+
+    <script src="../static/slide.js"></script>
+</body>
+
 </html>
