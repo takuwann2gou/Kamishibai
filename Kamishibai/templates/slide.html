@@ -29,10 +29,7 @@
         <img id="preview-image" src="{{ url_for('static', filename='images/' + slides[0]['image_url']) }}">
     </div>
     <!-- 保存ボタン -->
-    <form action="/save_slide" method="POST">
-        <input type="hidden" name="image_url" value="">
-        <button type="submit" onclick="saveSlide()">Save</button>
-    </form>
+    <button type="submit" onclick="saveSlide()">Save</button>
 
     <!-- スライド一覧表示部分 -->
     <div class="row">
@@ -66,7 +63,7 @@
         var order_preview = 0;
 
         // プレビュー表示用
-        function previewImage(img,order) {
+        function previewImage(img, order) {
             var preview = document.getElementById("preview-image");
             preview.src = img.src;
             order_preview = order;
@@ -101,36 +98,57 @@
         //             console.error('Error:', error);
         //         });
         // }
+        //         function saveSlide() {
+        //     // プレビューに表示中画像のimage_urlを取得
+        //     var selectedImageUrl = document.getElementById("preview-image").src;
+
+        //     // order_previewとtitleを含むオブジェクトを作成
+        //     var data = {
+        //         'order': 0,
+        //         'title': "update",
+        //         'image_url': selectedImageUrl  
+        //     };
+
+        //     // サーバにPOSTリクエストを送信
+        //     fetch('/save_slide', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(data)
+        //     })
+        //         .then(response => response.json())          //Jsonに変換
+        //         .then(data => {
+        //             var form = document.forms[0];           //フォームオブジェクトを取得
+        //             form.image_url.value = selectedImageUrl;//image_urlを更新
+        //             form.submit();                          //フォームの送信
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //         });
+        // }
         function saveSlide() {
-    // プレビューに表示中画像のimage_urlを取得
-    var selectedImageUrl = document.getElementById("preview-image").src;
+            // プレビューに表示中画像のimage_urlを取得
+            var selectedImageUrl = document.getElementById("preview-image").src;
 
-    // order_previewとtitleを含むオブジェクトを作成
-    var data = {
-        'order': 0,
-        'title': "update",
-        'image_url': selectedImageUrl  
-    };
+            // order_previewとtitleを含むリストを作成
+            var data = [{
+                'order': 0,
+                'title': "update",
+                'image_url': selectedImageUrl
+            }];
 
-    // サーバにPOSTリクエストを送信
-    fetch('/save_slide', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => response.json())          //Jsonに変換
-        .then(data => {
-            var form = document.forms[0];           //フォームオブジェクトを取得
-            form.image_url.value = selectedImageUrl;//image_urlを更新
-            form.submit();                          //フォームの送信
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-        //85
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/save_slide');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Data sent successfully!');
+                }
+            };
+            xhr.send(JSON.stringify({ 'data': data }));
+
+        }
     </script>
 
     <script src="../static/slide.js"></script>

@@ -109,26 +109,52 @@ def upload_audio():
 #         json.dump(data, f)
 #     return jsonify(success=True)
 
+# @app.route('/save_slide', methods=['POST'])
+# def save_slide():
+#     #データの展開と上書き
+#     data = request.get_json() # POSTされたJSONを取得
+#     print(data)  # 取得したJSONを確認
+#     try:
+#         order = data['order']
+#         image_url = data['image_url']
+#         with open('Kamishibai/static/slides.json', 'r') as f:
+#             slides = json.load(f) # 既存のJSONファイルを読み込み
+#         for slide in slides.values():
+#             for s in slide:
+#                 if s['order'] == order:
+#                     s['image_url'] = image_url
+#                     break
+#         with open('Kamishibai/static/slides.json', 'w') as f:
+#             json.dump(slides, f, indent=4, ensure_ascii=False) # JSONファイルを上書き
+#         return jsonify({'success': True})
+#     except:
+#         return jsonify({'success': False})
+
 @app.route('/save_slide', methods=['POST'])
 def save_slide():
-    #データの展開と上書き
-    data = request.get_json() # POSTされたJSONを取得
-    print(data)  # 取得したJSONを確認
-    try:
-        order = data['order']
-        image_url = data['image_url']
-        with open('Kamishibai/static/slides.json', 'r') as f:
-            slides = json.load(f) # 既存のJSONファイルを読み込み
-        for slide in slides.values():
-            for s in slide:
-                if s['order'] == order:
-                    s['image_url'] = image_url
-                    break
-        with open('Kamishibai/static/slides.json', 'w') as f:
-            json.dump(slides, f, indent=4, ensure_ascii=False) # JSONファイルを上書き
-        return jsonify({'success': True})
-    except:
-        return jsonify({'success': False})
+    if request.content_type != 'application/json':
+        return jsonify({'error': 'Content-Type must be application/json.'}), 415
+
+    request_data = request.get_json() # JSONを取得
+    slides = request_data['data'] # JSONからリストを取得
+    order = slides[0]['order']
+    image_url = slides[0]['image_url']
+    
+    # slides.jsonの内容を読み込む
+    with open('Kamishibai/static/slides.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+
+    # 指定されたorderに対応する要素を検索してimage_urlを更新
+    for i, slide in enumerate(data['senkanosousou']):
+        if slide['order'] == order:
+            data['senkanosousou'][i]['image_url'] = image_url
+            break
+
+    # 更新した内容をファイルに書き込む
+    with open('Kamishibai/static/slides.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False)
+
+    return redirect(url_for('slide'))
 
 
 # @app.route('/save_slide', methods=['POST'])
