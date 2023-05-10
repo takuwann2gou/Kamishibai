@@ -111,10 +111,34 @@ def upload_audio():
 
 @app.route('/save_slide', methods=['POST'])
 def save_slide():
-    slides = request.get_json()#Json型をlistにして取得
-    with open('Kamishibai/static/slides.json', 'w') as f:
-        json.dump(slides, f)#List型をJson型にしてファイルを作成上書き
-    return jsonify({'success': True})
+    #データの展開と上書き
+    data = request.get_json() # POSTされたJSONを取得
+    print(data)  # 取得したJSONを確認
+    try:
+        order = data['order']
+        image_url = data['image_url']
+        with open('Kamishibai/static/slides.json', 'r') as f:
+            slides = json.load(f) # 既存のJSONファイルを読み込み
+        for slide in slides.values():
+            for s in slide:
+                if s['order'] == order:
+                    s['image_url'] = image_url
+                    break
+        with open('Kamishibai/static/slides.json', 'w') as f:
+            json.dump(slides, f, indent=4, ensure_ascii=False) # JSONファイルを上書き
+        return jsonify({'success': True})
+    except:
+        return jsonify({'success': False})
+
+
+# @app.route('/save_slide', methods=['POST'])
+# def save_slide():
+#     slides = request.get_json()#Json型をlistにして取得
+#     with open('Kamishibai/static/slides.json', 'w') as f:
+#         json.dump(slides, f)#List型をJson型にしてファイルを作成上書き
+#     return jsonify({'success': True})
+
+
 ##　音声用の追加関数　##
 
 def get_audio_type(filename):

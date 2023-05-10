@@ -1,14 +1,14 @@
 {
     "senkanosousou": [
         {
+            "order": 0,
             "title": "メンテ",
-            "image_url": "2.jpg",
-            "order": 1
+            "image_url": "2.jpg"
         },
         {
+            "order": 1,
             "title": "なんか",
-            "image_url": "Group 12.png",
-            "order": 2
+            "image_url": "Group 12.png"
         }
     ]
 }
