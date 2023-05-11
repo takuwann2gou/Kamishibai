@@ -31,21 +31,14 @@
     <!-- 保存ボタン -->
     <button type="submit" onclick="saveSlide()">Save</button>
 
-    <!-- スライド一覧表示部分 -->
-    <div class="row">
-        {% for slide in slides %}
-        <p>{{ slide['title'] }}</p>
-        <div class="col-lg-3 col-md-4 col-6">
-            <div class="card mb-4">
-                <img class="card-img" src="{{ url_for('static', filename='images/' + slide['image_url']) }}"
-                    onclick="previewImage(this,slide['order'])">
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+    <!-- スライド一覧表示部分　INDEX -->
+    {% for slide in slides %}
+    <p>{{ slide['title'] }}</p>
+    <img class="card-img" src="{{ url_for('static', filename='images/' + slide['image_url']) }}" alt="{{ image }}"
+        onclick="previewImage(this,slide['order'])">
+    {% endfor %}
 
-    <!-- ライブラリを一覧表示 -->
-    <!-- INDEX -->
+    <!-- ライブラリを一覧表示　INDEX -->
     <h1>Images</h1>
     {% if images %}
     {% for image in images %}
@@ -61,81 +54,25 @@
     <script>
         // 現在選択中のスライド番号
         var order_preview = 0;
+        var image_preview = "";
 
-        // プレビュー表示用
-        function previewImage(img, order) {
+        // プレビュー画像の表示　＆　選択した画像　｜　スライド情報の取得
+        function previewImage(img, order = order_preview) {
             var preview = document.getElementById("preview-image");
             preview.src = img.src;
             order_preview = order;
+            image_preview = img.alt;
         }
 
-        // function saveSlide() {
-        //     // プレビューに表示中画像のimage_urlを取得
-        //     var selectedImageUrl = document.getElementById("preview-image").src;
-
-        //     // slides.jsonから対象スライドを取得
-        //     var slides = JSON.parse('{{ slides | tojson | safe}}');
-        //     var targetSlide = slides[order_preview];
-
-        //     // 対象スライドのimage_urlを更新
-        //     targetSlide['image_url'] = selectedImageUrl;
-
-        //     // 更新後のslides.jsonを保存
-        //     fetch('/save_slide', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(slides)
-        //     })
-        //         .then(response => response.json())          //Jsonに変換
-        //         .then(data => {
-        //             var form = document.forms[0];           //フォームオブジェクトを取得
-        //             form.image_url.value = selectedImageUrl;//image_urlを更新
-        //             form.submit();                          //フォームの送信
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //         });
-        // }
-        //         function saveSlide() {
-        //     // プレビューに表示中画像のimage_urlを取得
-        //     var selectedImageUrl = document.getElementById("preview-image").src;
-
-        //     // order_previewとtitleを含むオブジェクトを作成
-        //     var data = {
-        //         'order': 0,
-        //         'title': "update",
-        //         'image_url': selectedImageUrl  
-        //     };
-
-        //     // サーバにPOSTリクエストを送信
-        //     fetch('/save_slide', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(data)
-        //     })
-        //         .then(response => response.json())          //Jsonに変換
-        //         .then(data => {
-        //             var form = document.forms[0];           //フォームオブジェクトを取得
-        //             form.image_url.value = selectedImageUrl;//image_urlを更新
-        //             form.submit();                          //フォームの送信
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error);
-        //         });
-        // }
         function saveSlide() {
             // プレビューに表示中画像のimage_urlを取得
-            var selectedImageUrl = document.getElementById("preview-image").src;
+            var selectedImageUrl = image_preview;//document.getElementById("preview-image").src;
 
             // order_previewとtitleを含むリストを作成
             var data = [{
                 'order': 0,
                 'title': "update",
-                'image_url': selectedImageUrl
+                'image_url': image_preview
             }];
 
             var xhr = new XMLHttpRequest();
@@ -147,11 +84,8 @@
                 }
             };
             xhr.send(JSON.stringify({ 'data': data }));
-
         }
     </script>
-
-    <script src="../static/slide.js"></script>
 </body>
 
 </html>

@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect,session, url_for, flash, jsonify
 from IPython.display import Audio, display
 import os,json
 
 app = Flask(__name__)
+app.secret_key = '123456789012345678901234'
 
 # アップロードされた画像が保存されるディレクトリを指定
 UPLOAD_IMAGE_FOLDER = 'Kamishibai/static/images'
@@ -61,7 +62,7 @@ def index():
 def slide():
     images = get_image_list()
     #JSONの格納
-    with open('Kamishibai\static\slides.json', 'r', encoding="utf-8") as f:
+    with open('Kamishibai/static/slides.json', 'r', encoding="utf-8") as f:
         data = json.load(f)
     # JSON文字列に変換して、テンプレートに渡す前にエスケープを回避
     slides = json.dumps(data['senkanosousou'])
@@ -95,41 +96,6 @@ def upload_audio():
         flash('無効なファイル形式です。')
     return redirect(url_for('index'))
 
-
-##　スライドショーの更新　##
-
-# @app.route('/save_slide', methods=['POST'])
-# def save_slide():
-#     data = request.get_json()
-#     selected_image_url = request.form['selected_image_url']
-#     for slide in data['senkanosousou']:
-#         if slide['image_url'] == selected_image_url:
-#             slide['image_url'] = selected_image_url
-#     with open('slides.json', 'w') as f:
-#         json.dump(data, f)
-#     return jsonify(success=True)
-
-# @app.route('/save_slide', methods=['POST'])
-# def save_slide():
-#     #データの展開と上書き
-#     data = request.get_json() # POSTされたJSONを取得
-#     print(data)  # 取得したJSONを確認
-#     try:
-#         order = data['order']
-#         image_url = data['image_url']
-#         with open('Kamishibai/static/slides.json', 'r') as f:
-#             slides = json.load(f) # 既存のJSONファイルを読み込み
-#         for slide in slides.values():
-#             for s in slide:
-#                 if s['order'] == order:
-#                     s['image_url'] = image_url
-#                     break
-#         with open('Kamishibai/static/slides.json', 'w') as f:
-#             json.dump(slides, f, indent=4, ensure_ascii=False) # JSONファイルを上書き
-#         return jsonify({'success': True})
-#     except:
-#         return jsonify({'success': False})
-
 @app.route('/save_slide', methods=['POST'])
 def save_slide():
     if request.content_type != 'application/json':
@@ -153,17 +119,8 @@ def save_slide():
     # 更新した内容をファイルに書き込む
     with open('Kamishibai/static/slides.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False)
-
+        
     return redirect(url_for('slide'))
-
-
-# @app.route('/save_slide', methods=['POST'])
-# def save_slide():
-#     slides = request.get_json()#Json型をlistにして取得
-#     with open('Kamishibai/static/slides.json', 'w') as f:
-#         json.dump(slides, f)#List型をJson型にしてファイルを作成上書き
-#     return jsonify({'success': True})
-
 
 ##　音声用の追加関数　##
 
@@ -173,6 +130,16 @@ def get_audio_type(filename):
         return ext.lower()[1:]
     else:
         return None
+    
+##　リクエスト毎にキャッシュリセット ##
+
+@app.after_request
+def add_cache_control(response):
+    response.cache_control.no_cache = True
+    return response
+
+
 
 if __name__ == '__main__':
+
     app.run(debug=True)
