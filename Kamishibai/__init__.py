@@ -118,7 +118,7 @@ def save_slide():
 
     # 更新した内容をファイルに書き込む
     with open('Kamishibai/static/slides.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False)
+        json.dump(data, f, ensure_ascii=False, sort_keys=True, indent=4)
         
     return redirect(url_for('slide'))
 
